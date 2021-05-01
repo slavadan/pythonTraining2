@@ -1,49 +1,37 @@
 import random
 
-class Unit():
-    def __init__(self):
-        self.lvl: int = 1
-        self.team: int = random.randint(1, 2)
-        self.id: int = random.randint(0, 10000)
+def neighbourhood(list, x, y):
 
+        res = []
 
-class Hero(Unit):
-    def __init__(self):
-        Unit.__init__(self)
-        self.army = list()
+        if y-1 >= 0:
+            res.append(list[y-1][x])
+        if y+1 < len(list):
+            res.append(list[y+1][x])
 
+        if x-1 >= 0:
+            res.append(list[y][x-1])
+        if x+1 < len(list[y]):
+            res.append(list[y][x+1])
 
+        return res
 
-    def lvlup(self):
-        self.lvl += 1
+x: int = int(input())
+y: int = int(input())
 
-class Solder(Unit):
-    def follow(self, general: Hero):
-        print(general.id, self.id)
+list = []
 
+for i in range(y):
+    list.append([])
+    for m in range(x):
+        list[i].append(random.randint(0, 100))
 
-
-hero1 = Hero()
-hero1.team = 1
-
-hero2 = Hero()
-hero1.team = 2
-
-
-for x in range(0, 10):
-    solder = Solder()
-
-    if solder.team == hero1.team:
-        hero1.army.append(solder)
-    else:
-        hero2.army.append(solder)
+#output order top bottom left right
+for i in range(len(list)):
+    print(list[i])
 
 
 
-if len(hero1.army) > len(hero2.army):
-    hero1.lvlup()
-    print("hero1 lvlup")
-elif len(hero1.army) < len(hero2.army):
-    hero2.lvlup()
-
-hero1.army[0].follow(hero1)
+chooseX = int(input("Choose X coord: "))
+chooseY = int(input("Choose Y coord: "))
+print(neighbourhood(list, chooseX, chooseY))
