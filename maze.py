@@ -1,4 +1,3 @@
-import cell
 import random
 
 class Maze:
@@ -19,10 +18,7 @@ class Maze:
 
             self.fieldWithoutBorders.append(self.maze[i][1:-1])
 
-        self.breakWall(0, 0)
-
-
-
+        self.findVisitedCells()
 
 
     def generateStartedMaze(self):
@@ -37,55 +33,28 @@ class Maze:
                 if i % 2 != 0 and m % 2 != 0 and i < self.sizeY - 1 and m < self.sizeX - 1:
 
                     self.maze[i][m] = 0
-                    self.notVisitedCells.append(self.maze[i][m])
 
                 else:
 
                     self.maze[i][m] = 1
 
+    def findVisitedCells(self):
 
-    def breakWall(self, startX, startY):
+        for i in range(len(self.fieldWithoutBorders)):
+            for m in range(0, len(self.fieldWithoutBorders[i])):
 
-        chooseDirection = random.randint(1, 4)
+                if self.fieldWithoutBorders[i][m] == 0:
+                    self.notVisitedCells.append([m, i])
 
-        if len(self.notVisitedCells) == 0:
-            return
-
-        if chooseDirection == 1 and self.checkRightNeighbour(startX, startY): #go to right
-
-            self.fieldWithoutBorders[startY][startX + 1] = 0
-            self.notVisitedCells.pop(-1)
-            self.breakWall(startX + 1, startY)
-
-
-        if chooseDirection == 2 and self.checkLeftNeighbour(startX, startY): #go to left
-
-            self.fieldWithoutBorders[startY][startX - 1] = 0
-            self.notVisitedCells.pop(-1)
-            self.breakWall(startX - 1, startY)
-
-
-        if chooseDirection == 3 and self.checkTopNeighbour(startX, startY):#go to top
-
-            self.fieldWithoutBorders[startY - 1][startX] = 0
-            self.notVisitedCells.pop(-1)
-            self.breakWall(startX, startY - 1)
-
-        if chooseDirection == 4 and self.checkDownstairsNeighbor(startX, startY):
-
-            self.fieldWithoutBorders[startY + 1][startX] = 0
-            self.notVisitedCells.pop(-1)
-            self.breakWall(startX, startY + 1)
-
-
-
+    def startBreakWalls(self, x, y):
+        pass
 
 
 
     def checkTopNeighbour(self, x, y):
 
         if y - 1 >= 0 and self.fieldWithoutBorders[y - 1][x] == 1:
-            return True #neighbour not visited
+            return True # neighbour not visited
         else:
             return False
 
