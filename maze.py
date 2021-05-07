@@ -6,7 +6,6 @@ class Maze:
     def __init__(self, x, y):
 
         self.sizeX = x
-
         self.sizeY = y
 
         self.maze = []
@@ -54,7 +53,6 @@ class Maze:
         while len(direction) != 0:
 
             it = random.randint(0, len(direction) - 1)
-
             choosedDirection = direction[it]
 
             nextMovePosition = [row + choosedDirection[0], col + choosedDirection[1]]
@@ -106,6 +104,5 @@ class Maze:
         if col + 1 < len(mazeWithOutBorders) and mazeWithOutBorders[row][col + 1] == 1:
 
             res.append([0, 2])
-
 
         return res
