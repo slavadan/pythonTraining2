@@ -1,31 +1,26 @@
 import random
 
+
 class Maze:
 
-    def __init__(self, sizeX, sizeY):
+    def __init__(self, x, y):
 
-        self.sizeX = sizeX
-        self.sizeY = sizeY
+        self.sizeX = x
+
+        self.sizeY = y
 
         self.maze = []
-        self.fieldWithoutBorders = []
 
-        self.notVisitedCells = []
+        self.generateMaze()
 
-        self.generateStartedMaze()
+        self.breakWall()
 
-        for i in range(1, len(self.maze) - 1):
-
-            self.fieldWithoutBorders.append(self.maze[i][1:-1])
-
-        self.findVisitedCells()
-
-
-    def generateStartedMaze(self):
+    def generateMaze(self):
 
         for i in range(0, self.sizeY):
 
             self.maze.append([])
+
             self.maze[i] = [None] * self.sizeX
 
             for m in range(0, self.sizeX):
@@ -38,43 +33,79 @@ class Maze:
 
                     self.maze[i][m] = 1
 
-    def findVisitedCells(self):
+    def breakWall(self):
 
-        for i in range(len(self.fieldWithoutBorders)):
-            for m in range(0, len(self.fieldWithoutBorders[i])):
+        visited = list()
 
-                if self.fieldWithoutBorders[i][m] == 0:
-                    self.notVisitedCells.append([m, i])
+        self.breakWallHelper([1, 1], visited)
 
-    def startBreakWalls(self, x, y):
-        pass
+    def breakWallHelper(self, position, visited: []):
 
+        row = position[0]#stroka(y)
+        col = position[1]#stolb
 
-
-    def checkTopNeighbour(self, x, y):
-
-        if y - 1 >= 0 and self.fieldWithoutBorders[y - 1][x] == 1:
-            return True # neighbour not visited
-        else:
+        if row < 0 or col < 0 or row >= len(self.maze) or col >= len(self.maze[row]):
             return False
 
-    def checkLeftNeighbour(self, x, y):
+        direction = self.generateDirections(position)
 
-        if x - 1 >= 0 and self.fieldWithoutBorders[y][x - 1] == 1:
-            return True  # neighbour not visited
-        else:
-            return False
+        visited.append(position)
 
-    def checkRightNeighbour(self, x, y):
+        while len(direction) != 0:
 
-        if x + 1 < len(self.fieldWithoutBorders[y]) and self.fieldWithoutBorders[y][x + 1] == 1:
-            return True  # neighbour not visited
-        else:
-            return False
+            it = random.randint(0, len(direction) - 1)
 
-    def checkDownstairsNeighbor(self, x, y):
+            choosedDirection = direction[it]
 
-        if y + 1 < len(self.fieldWithoutBorders) and self.fieldWithoutBorders[y + 1][x] == 1:
-            return True  # neighbour not visited
-        else:
-            return False
+            nextMovePosition = [row + choosedDirection[0], col + choosedDirection[1]]
+
+            nextWallPosition = [int(row + choosedDirection[0] / 2), int(col + choosedDirection[1] / 2)]
+
+            res = False
+            for i in visited:
+
+                if i == nextMovePosition:
+                    res = True
+
+            if res == False:
+
+                if self.breakWallHelper(nextMovePosition, visited):
+
+                    self.maze[nextWallPosition[0]][nextWallPosition[1]] = 0
+
+            direction.remove(choosedDirection)
+
+        return True
+
+
+    def generateDirections(self, position: []):
+
+        row = position[0] - 1
+        col = position[1] - 1
+
+        res = []
+
+        mazeWithOutBorders = []
+
+        for i in range(1, len(self.maze) - 1):
+
+            mazeWithOutBorders.append(self.maze[i][1:-1])
+
+        if row - 1 >= 0 and mazeWithOutBorders[row - 1][col] == 1:
+
+            res.append([-2, 0])
+
+        if row + 1 < len(mazeWithOutBorders) and mazeWithOutBorders[row + 1][col] == 1:
+
+            res.append([2, 0])
+
+        if col - 1 >= 0 and mazeWithOutBorders[row][col - 1] == 1:
+
+            res.append([0, -2])
+
+        if col + 1 < len(mazeWithOutBorders) and mazeWithOutBorders[row][col + 1] == 1:
+
+            res.append([0, 2])
+
+
+        return res

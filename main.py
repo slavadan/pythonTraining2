@@ -9,9 +9,3 @@ a = 5
 
 for i in lab.maze:
     print(i)
-
-for i in lab.fieldWithoutBorders:
-    print(i)
-
-for i in lab.notVisitedCells:
-    print(i)
