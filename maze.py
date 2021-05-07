@@ -1,4 +1,5 @@
 import cell
+import random
 
 class Maze:
 
@@ -7,8 +8,10 @@ class Maze:
         self.sizeX = sizeX
         self.sizeY = sizeY
 
-        self.maze: [[cell.Cell]] = []
-        self.fieldWithoutBorders: [[cell.Cell]] = []
+        self.maze = []
+        self.fieldWithoutBorders = []
+
+        self.notVisitedCells = []
 
         self.generateStartedMaze()
 
@@ -16,9 +19,7 @@ class Maze:
 
             self.fieldWithoutBorders.append(self.maze[i][1:-1])
 
-        for i in range(len(self.fieldWithoutBorders)):
-            for m in self.fieldWithoutBorders[i]:
-                m.neighbors = self.findТ(m.x, m.y)
+        self.breakWall(0, 0)
 
 
 
@@ -33,39 +34,78 @@ class Maze:
 
             for m in range(0, self.sizeX):
 
-                newCell = cell.Cell(m, i)
-
                 if i % 2 != 0 and m % 2 != 0 and i < self.sizeY - 1 and m < self.sizeX - 1:
 
-                    self.maze[i][m] = newCell
+                    self.maze[i][m] = 0
+                    self.notVisitedCells.append(self.maze[i][m])
 
                 else:
 
-                    newCell.type = 1
+                    self.maze[i][m] = 1
 
-                    self.maze[i][m] = newCell
 
     def breakWall(self, startX, startY):
-        pass
 
-    def findТ(self, x, y):
+        chooseDirection = random.randint(1, 4)
 
-        res: [cell.Cell] = []
+        if len(self.notVisitedCells) == 0:
+            return
 
-        if x + 1 < len(self.fieldWithoutBorders[0]) and self.fieldWithoutBorders[y][x + 1].type == 1:
+        if chooseDirection == 1 and self.checkRightNeighbour(startX, startY): #go to right
 
-            res.append(self.fieldWithoutBorders[y][x + 1])
+            self.fieldWithoutBorders[startY][startX + 1] = 0
+            self.notVisitedCells.pop(-1)
+            self.breakWall(startX + 1, startY)
 
-        if x - 1 >= 0 and self.fieldWithoutBorders[y][x - 1].type == 1:
 
-            res.append(self.fieldWithoutBorders[y][x - 1])
+        if chooseDirection == 2 and self.checkLeftNeighbour(startX, startY): #go to left
 
-        # if y + 1 < len(self.fieldWithoutBorders) and self.fieldWithoutBorders[y + 1][x].type == 1:
-        #
-        #     res.append(self.fieldWithoutBorders[y + 1][x])
-        #
-        # if y - 1 >= 0 and self.fieldWithoutBorders[y - 1][x].type == 1:
-        #
-        #     res.append(self.fieldWithoutBorders[y - 1][x])
+            self.fieldWithoutBorders[startY][startX - 1] = 0
+            self.notVisitedCells.pop(-1)
+            self.breakWall(startX - 1, startY)
 
-        return res
+
+        if chooseDirection == 3 and self.checkTopNeighbour(startX, startY):#go to top
+
+            self.fieldWithoutBorders[startY - 1][startX] = 0
+            self.notVisitedCells.pop(-1)
+            self.breakWall(startX, startY - 1)
+
+        if chooseDirection == 4 and self.checkDownstairsNeighbor(startX, startY):
+
+            self.fieldWithoutBorders[startY + 1][startX] = 0
+            self.notVisitedCells.pop(-1)
+            self.breakWall(startX, startY + 1)
+
+
+
+
+
+
+    def checkTopNeighbour(self, x, y):
+
+        if y - 1 >= 0 and self.fieldWithoutBorders[y - 1][x] == 1:
+            return True #neighbour not visited
+        else:
+            return False
+
+    def checkLeftNeighbour(self, x, y):
+
+        if x - 1 >= 0 and self.fieldWithoutBorders[y][x - 1] == 1:
+            return True  # neighbour not visited
+        else:
+            return False
+
+    def checkRightNeighbour(self, x, y):
+
+        if x + 1 < len(self.fieldWithoutBorders[y]) and self.fieldWithoutBorders[y][x + 1] == 1:
+            return True  # neighbour not visited
+        else:
+            return False
+
+    def checkDownstairsNeighbor(self, x, y):
+
+        if y + 1 < len(self.fieldWithoutBorders) and self.fieldWithoutBorders[y + 1][x] == 1:
+            return True  # neighbour not visited
+        else:
+            return False
